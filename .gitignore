@@ -1,0 +1,19 @@
+# Django — Back/
+Back/**/__pycache__/
+Back/**/*.py[cod]
+Back/**/*$py.class
+Back/db.sqlite3
+Back/.env
+Back/.venv/
+Back/venv/
+
+# React — Front/
+Front/node_modules/
+Front/build/
+Front/.env.local
+Front/npm-debug.log*
+
+# IDE / OS
+.DS_Store
+.idea/
+*.log
