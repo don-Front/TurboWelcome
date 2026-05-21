@@ -1,0 +1,14 @@
+.shell {
+  min-height: 100vh;
+  background: var(--gradient-page-bg);
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-page-bg);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}

@@ -19,15 +19,26 @@ class Command(BaseCommand):
         Company.objects.all().delete()
         User.objects.filter(is_superuser=False).delete()
 
-        if not User.objects.filter(email='admin@turbowelcome.com').exists():
-            User.objects.create_superuser(
-                email='admin@turbowelcome.com',
-                password='admin123',
-                first_name='Админ',
-                last_name='Системы',
-                role=User.Role.HR_MANAGER,
-            )
-            self.stdout.write(self.style.SUCCESS('✓ Суперпользователь создан'))
+        admin, created = User.objects.get_or_create(
+            email='admin@turbowelcome.com',
+            defaults={
+                'first_name': 'Админ',
+                'last_name': 'Системы',
+                'role': User.Role.ADMIN,
+                'is_staff': True,
+                'is_superuser': True,
+            },
+        )
+        if created:
+            admin.set_password('admin123')
+            admin.save()
+        else:
+            admin.role = User.Role.ADMIN
+            admin.is_staff = True
+            admin.is_superuser = True
+            admin.set_password('admin123')
+            admin.save()
+        self.stdout.write(self.style.SUCCESS('[OK] Админ создан'))
 
         hr_user, created = User.objects.get_or_create(
             email='anna.hr@turbowelcome.com',
@@ -43,14 +54,30 @@ class Command(BaseCommand):
         if created:
             hr_user.set_password('hrpass123')
             hr_user.save()
-            self.stdout.write(self.style.SUCCESS('✓ HR-менеджер создан'))
+        self.stdout.write(self.style.SUCCESS('[OK] HR-менеджер создан'))
+
+        manager, created = User.objects.get_or_create(
+            email='sergey.mgr@turbowelcome.com',
+            defaults={
+                'first_name': 'Сергей',
+                'last_name': 'Козлов',
+                'role': User.Role.MANAGER,
+                'phone': '+7 (999) 555-12-34',
+                'position': 'Team Lead',
+                'hire_date': date(2021, 6, 1),
+            }
+        )
+        if created:
+            manager.set_password('mgrpass123')
+            manager.save()
+        self.stdout.write(self.style.SUCCESS('[OK] Руководитель создан'))
 
         employee, created = User.objects.get_or_create(
             email='ivan@turbowelcome.com',
             defaults={
                 'first_name': 'Иван',
                 'last_name': 'Петров',
-                'role': User.Role.EMPLOYEE,
+                'role': User.Role.NEW_EMPLOYEE,
                 'phone': '+7 (999) 987-65-43',
                 'position': 'Junior Developer',
                 'hire_date': date(2024, 12, 1),
@@ -59,7 +86,7 @@ class Command(BaseCommand):
         if created:
             employee.set_password('emppass123')
             employee.save()
-            self.stdout.write(self.style.SUCCESS('✓ Сотрудник создан'))
+        self.stdout.write(self.style.SUCCESS('[OK] Новый сотрудник создан'))
 
         company, _ = Company.objects.get_or_create(
             name='TurboTech',
@@ -69,7 +96,7 @@ class Command(BaseCommand):
                 'founded_date': date(2020, 3, 15),
             }
         )
-        self.stdout.write(self.style.SUCCESS('✓ Компания создана'))
+        self.stdout.write(self.style.SUCCESS('[OK] Компания создана'))
 
         it_dept, _ = Department.objects.get_or_create(
             name='Департамент разработки',
@@ -88,10 +115,13 @@ class Command(BaseCommand):
             company=company,
             defaults={'description': 'Продвижение продуктов и услуг'}
         )
-        self.stdout.write(self.style.SUCCESS('✓ Отделы созданы'))
+        self.stdout.write(self.style.SUCCESS('[OK] Отделы созданы'))
 
         hr_user.department = hr_dept
         hr_user.save()
+
+        manager.department = it_dept
+        manager.save()
 
         employee.department = it_dept
         employee.save()
@@ -104,7 +134,7 @@ class Command(BaseCommand):
                 'is_active': True,
             }
         )
-        self.stdout.write(self.style.SUCCESS('✓ Программа адаптации создана'))
+        self.stdout.write(self.style.SUCCESS('[OK] Программа адаптации создана'))
 
         steps_data = [
             {
@@ -139,6 +169,7 @@ class Command(BaseCommand):
                 'content': {
                     'team_members': [
                         {'name': 'Анна Иванова', 'role': 'HR Business Partner'},
+                        {'name': 'Сергей Козлов', 'role': 'Team Lead'},
                         {'name': 'Иван Петров', 'role': 'Junior Developer'},
                     ]
                 },
@@ -184,7 +215,7 @@ class Command(BaseCommand):
                 title=step_data['title'],
                 defaults=step_data,
             )
-        self.stdout.write(self.style.SUCCESS('✓ Шаги адаптации созданы'))
+        self.stdout.write(self.style.SUCCESS('[OK] Шаги адаптации созданы'))
 
         employee_onboarding, created = EmployeeOnboarding.objects.get_or_create(
             employee=employee,
@@ -203,10 +234,11 @@ class Command(BaseCommand):
                     step=step,
                     status=StepProgress.Status.NOT_STARTED,
                 )
-            self.stdout.write(self.style.SUCCESS('✓ Адаптация назначена сотруднику'))
+            self.stdout.write(self.style.SUCCESS('[OK] Адаптация назначена новому сотруднику'))
 
-        self.stdout.write(self.style.SUCCESS('\n✅ Все тестовые данные созданы успешно!'))
+        self.stdout.write(self.style.SUCCESS('\nВсе тестовые данные созданы успешно!'))
         self.stdout.write('\nДанные для входа:')
         self.stdout.write('  Админ: admin@turbowelcome.com / admin123')
         self.stdout.write('  HR: anna.hr@turbowelcome.com / hrpass123')
-        self.stdout.write('  Сотрудник: ivan@turbowelcome.com / emppass123')
+        self.stdout.write('  Руководитель: sergey.mgr@turbowelcome.com / mgrpass123')
+        self.stdout.write('  Новый сотрудник: ivan@turbowelcome.com / emppass123')

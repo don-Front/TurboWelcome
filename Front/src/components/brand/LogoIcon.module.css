@@ -1,0 +1,19 @@
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: rgba(20, 16, 36, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.22), inset 0 0 12px rgba(139, 92, 246, 0.18);
+}
+
+.logoIcon svg {
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+}

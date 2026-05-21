@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('role', User.Role.HR_MANAGER)
+        extra_fields.setdefault('role', User.Role.ADMIN)
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Суперпользователь должен иметь is_staff=True')
@@ -29,11 +29,13 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Кастомная модель пользователя с ролями HR/Employee"""
+    """Кастомная модель пользователя с ролями: админ, HR, руководитель, новый сотрудник"""
 
     class Role(models.TextChoices):
+        ADMIN = 'ADM', 'Админ'
         HR_MANAGER = 'HR', 'HR-менеджер'
-        EMPLOYEE = 'EMP', 'Сотрудник'
+        MANAGER = 'MGR', 'Руководитель'
+        NEW_EMPLOYEE = 'NEW', 'Новый сотрудник'
 
     email = models.EmailField('Email', unique=True, db_index=True)
     first_name = models.CharField('Имя', max_length=150)
@@ -42,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         'Роль',
         max_length=3,
         choices=Role.choices,
-        default=Role.EMPLOYEE,
+        default=Role.NEW_EMPLOYEE,
     )
     phone = models.CharField('Телефон', max_length=20, blank=True)
     avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True, null=True)
@@ -81,9 +83,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.first_name
 
     @property
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
+
+    @property
     def is_hr_manager(self):
         return self.role == self.Role.HR_MANAGER
 
     @property
-    def is_employee(self):
-        return self.role == self.Role.EMPLOYEE
+    def is_manager(self):
+        return self.role == self.Role.MANAGER
+
+    @property
+    def is_new_employee(self):
+        return self.role == self.Role.NEW_EMPLOYEE

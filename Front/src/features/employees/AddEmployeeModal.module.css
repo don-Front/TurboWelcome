@@ -1,0 +1,60 @@
+.modalWide {
+  max-width: 560px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-medium);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.cancelBtn {
+  height: 48px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.cancelBtn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-focus);
+}
+
+@media (max-width: 520px) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}

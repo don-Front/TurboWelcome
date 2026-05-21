@@ -6,9 +6,11 @@
 project:
   name: TurboWelcome
   description: >
-    Платформа для адаптации новых сотрудников. Два типа пользователей:
-    - HR / Руководитель: создаёт и управляет программой онбординга, отслеживает прогресс.
-    - Новый сотрудник: проходит адаптацию, знакомится с компанией, сотрудниками, процессами.
+    Платформа для адаптации новых сотрудников. Четыре роли пользователей:
+    - Админ (ADM): полный доступ к системе.
+    - HR (HR): создаёт и управляет программой онбординга, отслеживает прогресс.
+    - Руководитель (MGR): контролирует адаптацию команды, назначает программы.
+    - Новый сотрудник (NEW): проходит адаптацию, знакомится с компанией и процессами.
   repository: монорепозиторий
   branching:
     main: базовая ветка с бекендом и общей документацией
@@ -57,6 +59,7 @@ structure:
             - api/               # базовые классы API, миксины, утилиты
     - Front/
         - src/
+            - styles/             # theme.css — CSS-переменные дизайн-системы
             - components/        # переиспользуемые UI-компоненты (кнопки, карточки, модалки)
             - features/          # модули с бизнес-логикой (Onboarding, Company, Auth)
             - pages/             # страницы приложения (HRDashboard, EmployeeOnboarding, Profile)
@@ -117,13 +120,25 @@ ai_behavior:
 # 6. Роли пользователей и ключевые сущности
 # ===========================
 roles:
+  Admin:
+    code: ADM
+    actions:
+      - полный доступ к системе и админ-панели Django
+      - управление пользователями и настройками
   HR_Manager:
+    code: HR
     actions:
       - управление профилями сотрудников
       - создание/редактирование программы онбординга
       - просмотр прогресса новых сотрудников
-      - доступ к админ-панели Django (по необходимости)
-  Employee:
+  Manager:
+    code: MGR
+    actions:
+      - просмотр прогресса подчинённых
+      - создание программ адаптации (совместно с HR)
+      - назначение адаптации новым сотрудникам
+  New_Employee:
+    code: NEW
     actions:
       - просмотр плана адаптации
       - прохождение шагов (ознакомительные материалы, задания)
@@ -131,7 +146,7 @@ roles:
       - редактирование собственного профиля
 
 entities:
-  User: кастомная модель с ролью (HR, Employee), email, именем, аватаром
+  User: кастомная модель с ролью (ADM, HR, MGR, NEW), email, именем, аватаром
   Company: основная информация, отделы (Department), должности
   OnboardingProgram: шаблон программы, состоящий из OnboardingStep (шагов)
   EmployeeProgress: связь сотрудник-шаг, статус выполнения, заметки
@@ -154,7 +169,205 @@ api:
     Не оставлять API.md устаревшим — это блокирует работу фронтенда.
 
 # ===========================
-# 8. Стиль кода и конвенции
+# 8. Дизайн-система фронтенда (Glassmorphism Dark)
+# ===========================
+# Референс: TurboProject — тёмный glassmorphism с фиолетово-cyan акцентами.
+# Все новые UI-компоненты ОБЯЗАНЫ следовать этой системе.
+
+design_system:
+  name: TurboWelcome Glass Dark
+  concept: >
+    Тёмный high-tech интерфейс в стиле glassmorphism: полупрозрачные «стеклянные»
+    поверхности поверх глубокого градиентного фона, мягкие glow-эффекты,
+    pill-кнопки и крупные скругления. Без резких углов и плоских белых блоков.
+
+  theme:
+    mode: dark_only
+    background:
+      base: "#0a0c12"
+      gradient: >
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(139, 92, 246, 0.35) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0, 209, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #0a0c12 0%, #12141d 45%, #0f0c29 100%)
+      overlay_blur: "backdrop-filter: blur(8px)"
+
+  colors:
+    text:
+      primary: "#ffffff"
+      secondary: "rgba(255, 255, 255, 0.62)"
+      muted: "rgba(255, 255, 255, 0.38)"
+      label: "rgba(167, 176, 210, 0.85)"
+    accent:
+      cyan_primary: "#00d1ff"
+      cyan_hover: "#33dbff"
+      purple_primary: "#8b5cf6"
+      purple_deep: "#6d28d9"
+      purple_pink: "#a855f7"
+      link: "#c084fc"
+      link_hover: "#e9d5ff"
+    surface:
+      glass: "rgba(18, 22, 35, 0.72)"
+      glass_strong: "rgba(25, 18, 42, 0.82)"
+      input: "rgba(8, 10, 18, 0.92)"
+      sidebar: "rgba(12, 14, 24, 0.88)"
+    border:
+      subtle: "rgba(255, 255, 255, 0.08)"
+      medium: "rgba(255, 255, 255, 0.12)"
+      focus: "rgba(0, 209, 255, 0.45)"
+      active: "rgba(139, 92, 246, 0.55)"
+    status:
+      success: "#22c55e"
+      error: "#f87171"
+      warning: "#fbbf24"
+      info: "#60a5fa"
+
+  gradients:
+    primary_button: "linear-gradient(135deg, #00d1ff 0%, #06b6d4 100%)"
+    secondary_button: "linear-gradient(135deg, #a855f7 0%, #6366f1 100%)"
+    active_nav: "linear-gradient(90deg, rgba(168, 85, 247, 0.35) 0%, rgba(99, 102, 241, 0.15) 100%)"
+    glow_purple: "radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)"
+
+  typography:
+    font_family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    weights:
+      regular: 400
+      medium: 500
+      semibold: 600
+      bold: 700
+    scale:
+      caption: "11px"
+      label: "12px"
+      body: "14px"
+      body_lg: "15px"
+      title_sm: "18px"
+      title_md: "24px"
+      title_lg: "32px"
+      hero: "40px"
+    rules:
+      - Заголовки страниц — bold/semibold, белые.
+      - Подзаголовки и описания — secondary color, regular.
+      - Метки секций (SECURE ACCESS, ДОСТУП) — caption, uppercase, letter-spacing 0.08em, muted.
+      - Хлебные крошки — caption, uppercase, muted, через « / ».
+
+  spacing:
+    unit: 4px
+    scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+    card_padding: "24px"
+    section_gap: "24px"
+    page_padding: "32px"
+
+  radius:
+    sm: "12px"
+    md: "16px"
+    lg: "24px"
+    xl: "32px"
+    pill: "999px"
+    rule: >
+      Минимум 12px для инпутов и мелких элементов; 16–24px для карточек и попапов;
+      pill (999px) для основных кнопок и badge.
+
+  effects:
+    glass:
+      backdrop_filter: "blur(20px)"
+      webkit_backdrop: "-webkit-backdrop-filter: blur(20px)"
+    shadow:
+      card: "0 24px 48px rgba(0, 0, 0, 0.35)"
+      popup: "0 32px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.06)"
+      glow_cyan: "0 0 24px rgba(0, 209, 255, 0.28)"
+      glow_purple: "0 0 40px rgba(139, 92, 246, 0.25)"
+    transition: "all 0.25s ease"
+    hover:
+      button_lift: "translateY(-1px)"
+      link_underline: true
+
+  components:
+    card:
+      background: surface.glass
+      border: "1px solid border.subtle"
+      radius: radius.lg
+      padding: spacing.card_padding
+      backdrop: effects.glass.backdrop_filter
+
+    sidebar:
+      width: "280px"
+      background: surface.sidebar
+      border_right: "1px solid border.subtle"
+      nav_item:
+        inactive: "text secondary, transparent bg"
+        active: "gradient active_nav, border-left 3px purple, white text, subtle glow"
+        icon: "20px line icons, muted → white when active"
+
+    input:
+      height: "48px"
+      background: surface.input
+      border: "1px solid border.subtle"
+      radius: radius.sm
+      padding: "0 16px"
+      placeholder: text.muted
+      focus: "border-color focus, box-shadow glow_cyan"
+
+    button:
+      primary:
+        background: gradients.primary_button
+        color: "#041018"
+        radius: radius.pill
+        font_weight: semibold
+        shadow: glow_cyan
+        height: "48px"
+      secondary:
+        background: gradients.secondary_button
+        color: "#ffffff"
+        radius: radius.pill
+        font_weight: semibold
+        shadow: glow_purple
+      ghost:
+        background: "transparent"
+        border: "1px solid border.medium"
+        color: text.primary
+
+    badge:
+      background: "rgba(139, 92, 246, 0.2)"
+      border: "1px solid rgba(139, 92, 246, 0.35)"
+      radius: radius.pill
+      text: link color
+      uppercase: true
+
+    popup_auth:
+      description: >
+        Экран/попап авторизации: полноэкранный тёмный фон с фиолетовым glow слева.
+        Справа — колонка glass-карточек. Основная карточка переключается login ↔ register
+        по текстовым ссылкам без перезагрузки страницы.
+      layout:
+        left_panel: "брендинг TurboWelcome, hero-заголовок, 2–3 feature-карточки с иконками"
+        right_panel: "верхняя карточка-призыв к регистрации + основная форма (login/register)"
+      switch_links:
+        login_to_register: "Создать аккаунт / Зарегистрироваться"
+        register_to_login: "Уже есть аккаунт? Войти"
+      fields_login: [email, password, remember_me]
+      fields_register: [email, first_name, last_name, password, password_confirm, phone, position]
+
+    dashboard:
+      description: >
+        После входа — layout: sidebar + main glass-контейнер с breadcrumb, title, widgets-grid.
+        Карточки метрик: крупное число, подпись, иконка в круге справа сверху.
+      widget_grid: "repeat(auto-fit, minmax(200px, 1fr)), gap 16px"
+
+  css_variables:
+    file: "Front/src/styles/theme.css"
+    rule: >
+      Все цвета и радиусы выносить в CSS-переменные (--tw-* или --color-*).
+      Компоненты используют variables, не хардкод hex в module.css (кроме rgba-ов с opacity).
+
+  implementation_rules:
+    - Новые страницы и компоненты — CSS Modules (*.module.css) + theme.css variables.
+    - Не использовать светлую тему и Material UI «из коробки» без кастомизации под glass dark.
+    - Интерактивные элементы: transition 0.25s, visible :hover и :focus-visible.
+    - Ошибки форм — текст status.error под полем, border input error color.
+    - Loading на кнопках — disabled + opacity 0.7, текст «Загрузка...».
+    - При создании UI сверяться с design_system; отклонения только с явным обоснованием.
+
+# ===========================
+# 9. Стиль кода и конвенции
 # ===========================
 code_style:
   python:

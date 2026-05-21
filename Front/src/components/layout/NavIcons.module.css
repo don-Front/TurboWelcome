@@ -1,0 +1,20 @@
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: var(--transition-base);
+}
+
+.iconWrapActive {
+  color: var(--color-accent-link);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}

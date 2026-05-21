@@ -11,7 +11,7 @@ class OnboardingProgram(models.Model):
         verbose_name='Создатель',
         on_delete=models.CASCADE,
         related_name='created_programs',
-        limit_choices_to={'role': 'HR'},
+        limit_choices_to={'role__in': ['HR', 'ADM', 'MGR']},
     )
     is_active = models.BooleanField('Активна', default=True)
     created_at = models.DateTimeField('Создано', auto_now_add=True)
@@ -75,7 +75,7 @@ class EmployeeOnboarding(models.Model):
         verbose_name='Сотрудник',
         on_delete=models.CASCADE,
         related_name='onboardings',
-        limit_choices_to={'role': 'EMP'},
+        limit_choices_to={'role': 'NEW'},
     )
     program = models.ForeignKey(
         OnboardingProgram,
