@@ -1,0 +1,532 @@
+/* ── Base gallery ── */
+
+.gallery {
+  width: 100%;
+}
+
+.galleryEmpty {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── View: Grid ── */
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── View: Mosaic ── */
+
+.galleryMosaic {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 120px;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.mosaicLg {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.mosaicWide {
+  grid-column: span 2;
+  grid-row: span 1;
+}
+
+.mosaicMd {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.mosaicSm {
+  grid-column: span 1;
+  grid-row: span 1;
+  transition: transform 0.35s ease, z-index 0s;
+}
+
+.galleryMosaic .mosaicSm:hover {
+  transform: scale(1.12);
+  z-index: 3;
+}
+
+.galleryMosaic .flipCard {
+  aspect-ratio: unset;
+  height: 100%;
+  min-height: 120px;
+}
+
+/* ── View: Slider ── */
+
+.gallerySlider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 4px 16px;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gallerySlider::-webkit-scrollbar {
+  height: 6px;
+}
+
+.gallerySlider::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.35);
+  border-radius: var(--radius-pill);
+}
+
+.gallerySlider .flipCard {
+  flex: 0 0 min(320px, 78vw);
+  aspect-ratio: 1;
+  scroll-snap-align: start;
+}
+
+.gallerySlider .addBtnSlider {
+  flex: 0 0 min(320px, 78vw);
+  aspect-ratio: 1;
+  min-height: unset;
+}
+
+/* ── View: Filmstrip ── */
+
+.galleryFilmstrip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 6px 2px 14px;
+  scroll-snap-type: x proximity;
+}
+
+.galleryFilmstrip .flipCard {
+  flex: 0 0 200px;
+  aspect-ratio: 4 / 5;
+}
+
+.galleryFilmstrip .addBtnFilmstrip {
+  flex: 0 0 200px;
+  aspect-ratio: 4 / 5;
+  min-height: unset;
+}
+
+/* ── View: Spotlight ── */
+
+.gallerySpotlight {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-auto-rows: 140px;
+  gap: 16px;
+}
+
+.spotlightHero {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+}
+
+.spotlightSide {
+  grid-column: 2;
+  grid-row: span 1;
+}
+
+.spotlightRow {
+  grid-column: 1 / -1;
+  grid-row: span 1;
+}
+
+.gallerySpotlight .spotlightHero.flipCard {
+  aspect-ratio: unset;
+  height: 100%;
+  min-height: 420px;
+}
+
+.gallerySpotlight .spotlightSide.flipCard,
+.gallerySpotlight .spotlightRow.flipCard {
+  aspect-ratio: unset;
+  height: 100%;
+  min-height: 130px;
+}
+
+.gallerySpotlight .addBtnSpotlight {
+  grid-column: 2;
+  min-height: 130px;
+  aspect-ratio: unset;
+}
+
+/* ── View: Columns ── */
+
+.galleryColumns {
+  column-count: 3;
+  column-gap: 18px;
+}
+
+.galleryColumns .flipCard,
+.galleryColumns .addBtn {
+  break-inside: avoid;
+  margin-bottom: 18px;
+  aspect-ratio: 1;
+}
+
+.galleryColumns .addBtnColumns {
+  min-height: 240px;
+}
+
+/* ── Flip card ── */
+
+.flipCard {
+  aspect-ratio: 1;
+  perspective: 1000px;
+  border-radius: var(--radius-md);
+}
+
+.flipCard:not(.flipped) .flipBack {
+  pointer-events: none;
+}
+
+.flipCard.flipped .flipFront {
+  pointer-events: none;
+}
+
+.flipCard.editing .flipFront {
+  pointer-events: none;
+}
+
+.flipInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flipCard.flipped .flipInner {
+  transform: rotateY(180deg);
+}
+
+.flipFront,
+.flipBack {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.flipFront {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.flipBack {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-glass-strong);
+  border: 1px solid var(--color-border-medium);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.photoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photoFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+/* ── Back toolbar (pencil before delete) ── */
+
+.backToolbar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backPencilBtn,
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.backPencilBtn {
+  width: 30px;
+  height: 30px;
+  background: rgba(48, 42, 72, 0.82);
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.backPencilBtn:hover {
+  color: #f97316;
+  border-color: rgba(249, 115, 22, 0.45);
+  background: rgba(48, 42, 72, 0.95);
+}
+
+.deleteBtn {
+  width: 30px;
+  height: 30px;
+  background: rgba(24, 28, 42, 0.72);
+  color: var(--color-text-muted);
+}
+
+.deleteBtn:hover:not(:disabled) {
+  color: var(--color-status-error);
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pencilIconSmall {
+  width: 14px;
+  height: 14px;
+}
+
+.actionIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Back content ── */
+
+.backContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 16px 16px;
+  min-height: 0;
+}
+
+.backContentEditing {
+  align-items: stretch;
+  padding: 52px 12px 12px;
+}
+
+.titleText {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  word-break: break-word;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.centerPencilBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 1px dashed var(--color-border-medium);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.centerPencilBtn:hover {
+  color: #f97316;
+  border-color: rgba(249, 115, 22, 0.5);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.pencilIconLarge {
+  width: 26px;
+  height: 26px;
+}
+
+.titleInputFull {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 14px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-input);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  transition: var(--transition-base);
+}
+
+.titleInputFull:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.titleInputFull::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* ── Add photo button ── */
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-border-medium);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-accent-link);
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-family: inherit;
+}
+
+.addBtn:hover {
+  border-color: rgba(168, 85, 247, 0.55);
+  background: rgba(168, 85, 247, 0.1);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.addBtnLarge {
+  width: 160px;
+  height: 160px;
+}
+
+.addBtnCompact {
+  aspect-ratio: 1;
+  min-height: 240px;
+}
+
+.addBtnMosaic {
+  grid-column: span 1;
+  grid-row: span 1;
+  min-height: 120px;
+  aspect-ratio: unset;
+  height: 100%;
+}
+
+.addIcon {
+  font-size: 46px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.addBtnCompact .addIcon {
+  font-size: 36px;
+}
+
+/* ── Loading / error ── */
+
+.stateBox {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.stateText {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+
+.retryBtn {
+  padding: 10px 18px;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition-base);
+}
+
+.retryBtn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-focus);
+}
+
+@media (max-width: 960px) {
+  .galleryMosaic {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 110px;
+  }
+
+  .gallerySpotlight {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+
+  .gallerySpotlight .spotlightHero.flipCard {
+    grid-row: span 1;
+    min-height: 280px;
+  }
+
+  .gallerySpotlight .spotlightSide.flipCard {
+    min-height: 180px;
+  }
+
+  .galleryColumns {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .galleryGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .galleryMosaic {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mosaicLg,
+  .mosaicWide {
+    grid-column: span 2;
+  }
+
+  .addBtnCompact {
+    min-height: 200px;
+  }
+
+  .galleryColumns {
+    column-count: 1;
+  }
+}

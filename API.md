@@ -643,10 +643,103 @@ const isNewEmployee = user.role === 'NEW';
 
 ---
 
+## Organization — фотогалерея
+
+Базовый префикс: `/api/v1/organization/`
+
+### GET `/organization/gallery/`
+
+Список фото организации. Доступен всем аутентифицированным пользователям.
+
+**Response `200 OK`:** массив объектов (без пагинации)
+
+```json
+[
+  {
+    "id": 1,
+    "image": "/media/organization/gallery/office.jpg",
+    "image_url": "http://localhost:8000/media/organization/gallery/office.jpg",
+    "title": "Офис TurboTech",
+    "uploaded_by": 2,
+    "uploaded_by_name": "Анна Иванова",
+    "created_at": "2026-05-22T08:00:00+03:00"
+  }
+]
+```
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `id` | number | ID фото |
+| `image` | string | Относительный путь к файлу |
+| `image_url` | string | Полный URL изображения |
+| `title` | string | Подпись на обороте карточки (может быть пустым) |
+| `uploaded_by` | number \| null | ID пользователя, загрузившего фото |
+| `uploaded_by_name` | string \| null | Имя загрузившего (read-only) |
+| `created_at` | string | Дата загрузки (ISO 8601) |
+
+### POST `/organization/gallery/`
+
+Загрузка нового фото. Доступен всем аутентифицированным пользователям.
+
+**Content-Type:** `multipart/form-data`
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|--------------|----------|
+| `image` | file | да | JPG, PNG, WEBP, GIF · до 10 МБ |
+| `title` | string | нет | Название фото |
+
+**Response `201 Created`:** объект фото (см. GET)
+
+**Response `400 Bad Request`:** ошибка валидации (формат, размер)
+
+```json
+{
+  "image": ["Допустимые форматы: JPG, PNG, WEBP, GIF"]
+}
+```
+
+### PATCH `/organization/gallery/{id}/`
+
+Обновление подписи на обороте карточки (поле `title`). Доступен всем аутентифицированным пользователям.
+
+**Content-Type:** `application/json`
+
+| Поле | Тип | Обязательное | Описание |
+|------|-----|--------------|----------|
+| `title` | string | нет | Подпись к фото (до 200 символов, может быть пустой) |
+
+**Request body (пример):**
+
+```json
+{
+  "title": "Офис TurboTech"
+}
+```
+
+**Response `200 OK`:** объект фото (см. GET)
+
+**Response `400 Bad Request`:** ошибка валидации
+
+**Response `404 Not Found`:** фото не найдено
+
+---
+
+### DELETE `/organization/gallery/{id}/`
+
+Удаление фото из галереи. Доступен всем аутентифицированным пользователям.
+
+**Response `204 No Content`**
+
+**Response `404 Not Found`:** фото не найдено
+
+---
+
 ## Changelog
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-05-22 | PATCH `/organization/gallery/{id}/` — обновление подписи (`title`) |
+| 2026-05-22 | GET/POST `/organization/gallery/`, DELETE `/organization/gallery/{id}/` |
 | 2026-05-21 | PATCH/DELETE `/auth/users/{id}/` и `/auth/users/new/{id}/` |
 | 2026-05-21 | PATCH `/auth/me/` — загрузка аватара (multipart) |
 | 2026-05-21 | POST `/auth/users/` для админа; departments доступен ADM и HR |

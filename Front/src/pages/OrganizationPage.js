@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import GalleryViewSwitcher from '../features/organization/GalleryViewSwitcher';
+import PhotoGallery from '../features/organization/PhotoGallery';
+import TerritorySchemes from '../features/organization/TerritorySchemes';
+import TerritoryViewSwitcher from '../features/organization/TerritoryViewSwitcher';
 import styles from './OrganizationPage.module.css';
 
 const SECTIONS = [
@@ -6,20 +10,10 @@ const SECTIONS = [
   { id: 'maps', label: 'Схемы территорий' },
 ];
 
-const SECTION_CONTENT = {
-  gallery: {
-    title: 'Фотогалерея',
-    text: 'Фото офисов, мероприятий и команды. Раздел в разработке.',
-  },
-  maps: {
-    title: 'Схемы территорий',
-    text: 'Планы этажей, навигация по офисам и производственным площадкам. Раздел в разработке.',
-  },
-};
-
 function OrganizationPage() {
   const [activeSection, setActiveSection] = useState('gallery');
-  const content = SECTION_CONTENT[activeSection];
+  const [galleryView, setGalleryView] = useState('grid');
+  const [territoryView, setTerritoryView] = useState('popup');
 
   return (
     <div className={styles.page}>
@@ -38,10 +32,23 @@ function OrganizationPage() {
         ))}
       </div>
 
-      <div className={styles.content} role="tabpanel">
-        <span className={styles.badge}>Скоро</span>
-        <h2 className={styles.title}>{content.title}</h2>
-        <p className={styles.text}>{content.text}</p>
+      {activeSection === 'gallery' && (
+        <GalleryViewSwitcher value={galleryView} onChange={setGalleryView} />
+      )}
+
+      {activeSection === 'maps' && (
+        <TerritoryViewSwitcher value={territoryView} onChange={setTerritoryView} />
+      )}
+
+      <div
+        className={`${styles.content} ${activeSection === 'gallery' || activeSection === 'maps' ? styles.contentGallery : ''}`}
+        role="tabpanel"
+      >
+        {activeSection === 'gallery' ? (
+          <PhotoGallery viewMode={galleryView} />
+        ) : (
+          <TerritorySchemes viewMode={territoryView} />
+        )}
       </div>
     </div>
   );

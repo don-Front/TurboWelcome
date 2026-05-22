@@ -3,11 +3,12 @@ import { PAGE_META, useNavigation } from '../context/NavigationContext';
 import { useAuth } from '../context/AuthContext';
 import HomePage from '../pages/HomePage';
 import PlaceholderPage from '../pages/PlaceholderPage';
+import GlossaryPage from '../pages/GlossaryPage';
 import OrganizationPage from '../pages/OrganizationPage';
 import ProfilePage from '../pages/ProfilePage';
 import UsersPage from '../pages/UsersPage';
 
-const PLACEHOLDER_PAGES = new Set(['onboarding', 'glossary', 'settings']);
+const PLACEHOLDER_PAGES = new Set(['onboarding', 'settings']);
 
 function canAccessPage(pageId, role) {
   if (pageId === 'users') return role === 'ADM';
@@ -38,6 +39,10 @@ function renderPageContent(currentPage, role) {
 
   if (currentPage === 'organization') {
     return <OrganizationPage />;
+  }
+
+  if (currentPage === 'glossary') {
+    return <GlossaryPage />;
   }
 
   if (PLACEHOLDER_PAGES.has(currentPage)) {

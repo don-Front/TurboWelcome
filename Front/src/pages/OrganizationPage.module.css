@@ -52,6 +52,12 @@
   border: 1px solid var(--color-border-subtle);
 }
 
+.contentGallery {
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
+}
+
 .badge {
   display: inline-block;
   margin-bottom: 16px;

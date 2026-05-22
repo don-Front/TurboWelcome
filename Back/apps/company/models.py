@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -39,3 +40,27 @@ class Department(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.company.name})'
+
+
+class OrganizationPhoto(models.Model):
+    """Фото организации для фотогалереи"""
+
+    image = models.ImageField('Фото', upload_to='organization/gallery/')
+    title = models.CharField('Название', max_length=200, blank=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name='Загрузил',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='uploaded_organization_photos',
+    )
+    created_at = models.DateTimeField('Создано', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Фото организации'
+        verbose_name_plural = 'Фото организации'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title or f'Фото #{self.pk}'
